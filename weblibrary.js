@@ -11,9 +11,8 @@ var context;
 var webdriver = require('selenium-webdriver');
 
 var weblibrary = {
-	init: function(context) {
-		var self = this;
-		self.context = context;
+	init: function() {
+		var context = {};
 	
 		// mocha lifecycle operations
 		function initBrowser(done) {
@@ -22,18 +21,20 @@ var weblibrary = {
 				.withCapabilities({'browserName': 'chrome'})
 				.build();
 			driver.manage().timeouts().implicitlyWait(15000);
-			self.context.driver = driver;
+			context.driver = driver;
 			done();
 		}
 	
 		function shutdownBrowser(done) {
-			self.context.driver.quit().then(function() {
+			context.driver.quit().then(function() {
 				done();
 			});
 		}
 	
 		before(initBrowser);
 		after(shutdownBrowser);
+
+		return context;
 	}
 };
 
