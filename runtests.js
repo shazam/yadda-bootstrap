@@ -8,18 +8,21 @@
  *Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-var Yadda = require('yadda').Yadda;
-require('yadda').plugins.mocha();
 var glob = require('glob');
-var Library = require('yadda').localisation.English;
-var library = new Library();
+var Yadda = require('yadda');
+Yadda.plugins.mocha();
 
-var context = {};
-var webcontext = require('./weblibrary').library.init(context);
-var yadda = new Yadda(library, context);
+var libraries = stepDefs().reduce(importStepDef, []);
+var context = require('./weblibrary').library.init();
+var yadda = new Yadda.Yadda(libraries, context); 
 
-stepDefs().forEach(importStepDef);
-featureFiles().forEach(executeFeature);
+featureFiles().forEach(function(file) {
+    feature(file, function(feature) {
+        scenarios(feature.scenarios, function(scenario, done) {         
+            yadda.yadda(scenario.steps, done);
+        })
+    })
+});
 
 function featureFiles() {
 	return glob.sync("features/**/*.feature");
@@ -29,11 +32,8 @@ function stepDefs() {
 	return glob.sync("stepdefs/**/*.js")
 };
 
-function importStepDef(stepdef) {
+function importStepDef(stepdefs, stepdef) {
 	var fileName = stepdef.replace('.js', '');
-	require('./' + fileName).steps.using(library, context);
-};
-
-function executeFeature(featureFile) {
-	yadda.mocha('Bootstrap', featureFile);
+    var library = require('./' + fileName);
+	return stepdefs.concat(library);
 };

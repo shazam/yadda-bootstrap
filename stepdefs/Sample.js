@@ -9,31 +9,27 @@
  */
 var webdriver = require('selenium-webdriver');
 var assert = require('selenium-webdriver/testing/assert');
+var library = new require('yadda').localisation.English();
 
-var Steps = {
-	using: function(library, ctx) {
-		library.given("I am on google", function(next) {
-			ctx.driver.get("http://www.google.co.uk")
-			.then(function() {
-				next();
-			});
+module.exports = library
+
+	.given("I am on google", function(next) {
+		this.driver.get("http://www.google.co.uk")
+		.then(function() {
+			next();
 		});
+	})
 
-		library.when("I search for $query", function(query, next) {
-			ctx.driver.findElement(webdriver.By.css("#gbqfq")).sendKeys(query);
-			ctx.driver.findElement(webdriver.By.css("#gbqfb")).click().then(function() {
-				next();
-			});
+	.when("I search for $query", function(query, next) {
+		this.driver.findElement(webdriver.By.css("#gbqfq")).sendKeys(query);
+		this.driver.findElement(webdriver.By.css("#gbqfb")).click().then(function() {
+			next();
 		});
+	})
 
-		library.then("I should see the yadda github in the results", function(next) {
-			ctx.driver.findElement(webdriver.By.css("cite")).getText().then(function(text) {
-				assert(text).contains("https://github.com/acuminous/");
-	
-				next();
-			});
+	.then("I should see the yadda github in the results", function(next) {
+		this.driver.findElement(webdriver.By.css("cite")).getText().then(function(text) {
+			assert(text).contains("https://github.com/acuminous/");
+			next();
 		});
-	}
-};
-
-exports.steps = Steps;
+	});

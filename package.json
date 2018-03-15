@@ -3,11 +3,14 @@
   "description": "Packages used for running web acceptance tests",
   "author": "Colin Vipurs <colin.vipurs@shazam.com>",
   "devDependencies": {
-    "yadda": "~0.5.2",
+    "yadda": "~0.6.2",
     "mocha": "~1.12.0",
     "selenium-webdriver": "2.35.x",
     "glob": "~3.2.x",
     "xunit-file" : "0.0.4"
   },
-  "engine": "node >= 0.8.0"
+  "engine": "node >= 0.8.0",
+  "scripts": {
+    "test": "make test"
+  }
 }
